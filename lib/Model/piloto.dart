@@ -2,7 +2,7 @@ class Piloto {
   String hora;
   String nome;
   int nvolta; // numero de voltas
-  String tv; // tempo de volta
+  Duration tv; // tempo de volta
   double vmv; // Velocidade média da volta
 
   Piloto(this.hora, this.nome, this.nvolta, this.tv, this.vmv);
@@ -19,7 +19,7 @@ class Piloto {
     return nvolta;
   }
 
-  String getTV() {
+  Duration getTV() {
     return tv;
   }
 

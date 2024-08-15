@@ -16,7 +16,12 @@ class _MainpageState extends State<Mainpage> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(50),
-        child: Table(children: CorridaK().getList()),
+        child: Table(
+            border: TableBorder.all(
+              borderRadius: BorderRadius.circular(20),
+              color: const Color.fromARGB(255, 209, 33, 35),
+            ),
+            children: CorridaK().getList()),
       ),
     );
   }

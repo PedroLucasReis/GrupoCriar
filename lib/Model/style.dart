@@ -4,7 +4,20 @@ class Style {
   Text title(String text) {
     return Text(
       text,
-      style: const TextStyle(color: Colors.white),
+      textAlign: TextAlign.center,
+      style: const TextStyle(
+        color: Colors.white,
+      ),
+    );
+  }
+
+  Text ctext(String text) {
+    return Text(
+      text,
+      textAlign: TextAlign.center,
+      style: const TextStyle(
+        color: Colors.black,
+      ),
     );
   }
 }
