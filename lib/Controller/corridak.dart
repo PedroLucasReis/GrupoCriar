@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:grupocriarkart/Model/Linha.dart';
 import 'package:grupocriarkart/Model/piloto.dart';
 import 'package:grupocriarkart/Model/style.dart';
@@ -284,7 +285,7 @@ class CorridaK {
         35.633)
   ];
 
-  List<TableRow> getList() {
+  Future<List<TableRow>> getList() async {
     Map<String, List<Piloto>> pilotosPorNome = {};
 
     pilotos.sort((a, b) => a.nome.compareTo(b.nome));
@@ -305,12 +306,23 @@ class CorridaK {
 
     for (var piloto1 in pilotosPorNome.keys) {
       Duration tempototal = const Duration();
+      Duration vmr = pilotosPorNome[piloto1]![0].tv; //volta mais rapida
+      double vmc = 0; // Velocidade média em toda a corrida
       pilotosPorNome[piloto1]!.sort((a, b) => b.nvolta.compareTo(a.nvolta));
       for (var volta in pilotosPorNome[piloto1]!) {
         tempototal = volta.tv + tempototal;
+        if (volta.tv < vmr) {
+          vmr = volta.tv;
+        }
+        vmc = volta.vmv + vmc;
       }
-      linhas.add(Linha(pilotosPorNome[piloto1]![0].nome.substring(0, 3),
-          piloto1, pilotosPorNome[piloto1]![0].nvolta, tempototal));
+      linhas.add(Linha(
+          pilotosPorNome[piloto1]![0].nome.substring(0, 3),
+          piloto1,
+          pilotosPorNome[piloto1]![0].nvolta,
+          tempototal,
+          vmr,
+          vmc / pilotosPorNome[piloto1]!.length));
       linhas.sort((a, b) => a.ttdp.compareTo(b.ttdp));
     }
 
@@ -322,7 +334,6 @@ class CorridaK {
     List<TableRow> tabela = [
       TableRow(
           decoration: const BoxDecoration(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             color: Color.fromARGB(255, 209, 33, 35),
           ),
           children: [
@@ -344,6 +355,14 @@ class CorridaK {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: Style().title('Tempo total de prova'),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Style().title('Volta mais rápida'),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Style().title('Velocidade média em toda a corrida'),
             )
           ])
     ];
@@ -369,10 +388,29 @@ class CorridaK {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Style().ctext(li.ttdp.toString()),
-        )
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Style().ctext(li.vmr.toString()),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Style().ctext(li.vmc.toStringAsFixed(3)),
+        ),
       ]));
     }
 
     return tabela;
+  }
+
+  Piloto melhorvc() // Retorna a melhor volta da corrida
+  {
+    Piloto mvc = pilotos[0];
+    for (var piloto in pilotos) {
+      if (piloto.tv < mvc.tv) {
+        mvc = piloto;
+      }
+    }
+    return mvc;
   }
 }
