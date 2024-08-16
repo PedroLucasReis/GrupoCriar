@@ -5,9 +5,12 @@ import 'package:grupocriarkart/Model/piloto.dart';
 import 'package:grupocriarkart/Model/style.dart';
 import 'package:intl/intl.dart';
 
+/// Cria a tabela e trata os dados.
 class CorridaK {
   List<Piloto> pilotos = [
+    // Lista de dados formatados
     Piloto(
+        // Objeto criado para cada piloto
         DateFormat('HH:mm:ss.SSS').format(DateFormat('HH:mm:ss.SSS').parse(
           '23:49:08.277',
         )),
@@ -288,7 +291,8 @@ class CorridaK {
   Future<List<TableRow>> getList() async {
     Map<String, List<Piloto>> pilotosPorNome = {};
 
-    pilotos.sort((a, b) => a.nome.compareTo(b.nome));
+    pilotos.sort(
+        (a, b) => a.nome.compareTo(b.nome)); // Ordenação de lista por nome
 
     // Separar os objetos pelo nome
     List nomes = [];
@@ -302,13 +306,16 @@ class CorridaK {
 
     int posicao = 0;
 
-    List<Linha> linhas = [];
+    List<Linha> linhas = []; //Linhas da tabela
 
     for (var piloto1 in pilotosPorNome.keys) {
-      Duration tempototal = const Duration();
+      Duration tempototal =
+          const Duration(); // Tempo total de toda a corrida por piloto
       Duration vmr = pilotosPorNome[piloto1]![0].tv; //volta mais rapida
       double vmc = 0; // Velocidade média em toda a corrida
-      pilotosPorNome[piloto1]!.sort((a, b) => b.nvolta.compareTo(a.nvolta));
+
+      pilotosPorNome[piloto1]!.sort((a, b) => b.nvolta.compareTo(
+          a.nvolta)); // Ordenação de lista pelo numero de voltas do piloto
       for (var volta in pilotosPorNome[piloto1]!) {
         tempototal = volta.tv + tempototal;
         if (volta.tv < vmr) {
@@ -316,19 +323,25 @@ class CorridaK {
         }
         vmc = volta.vmv + vmc;
       }
+
       linhas.add(Linha(
-          pilotosPorNome[piloto1]![0].nome.substring(0, 3),
-          piloto1,
-          pilotosPorNome[piloto1]![0].nvolta,
-          tempototal,
-          vmr,
-          vmc / pilotosPorNome[piloto1]!.length));
+        pilotosPorNome[piloto1]![0].nome.substring(0, 3),
+        piloto1,
+        pilotosPorNome[piloto1]![0].nvolta,
+        tempototal,
+        vmr,
+        vmc / pilotosPorNome[piloto1]!.length,
+      ));
       linhas.sort((a, b) => a.ttdp.compareTo(b.ttdp));
     }
-
+    Duration ddt = const Duration();
     for (var lin in linhas) {
       posicao = posicao + 1;
       lin.pdc = posicao;
+      if (ddt == const Duration()) {
+        ddt = lin.ttdp;
+      }
+      lin.ddt = ddt - lin.ttdp;
     }
 
     List<TableRow> tabela = [
@@ -363,7 +376,11 @@ class CorridaK {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: Style().title('Velocidade média em toda a corrida'),
-            )
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Style().title('Diferença de tempo com vencedor'),
+            ),
           ])
     ];
 
@@ -396,6 +413,10 @@ class CorridaK {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Style().ctext(li.vmc.toStringAsFixed(3)),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Style().ctext(li.ddt.toString()),
         ),
       ]));
     }
